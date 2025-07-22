@@ -13,13 +13,13 @@ const TodoForm = () => {
   const ref = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const addTodo = useMutation({
+  const addTodo = useMutation<Todo, Error, Todo>({
     mutationFn: (todo: Todo) =>
       axios
         .post<Todo>("https://jsonplaceholder.typicode.com/todos", todo)
         .then((res) => res.data),
     onSuccess: (savedTodo, newTodo) => {
-      //Approach 1 : invalidatin the queries
+      //Approach 1 : invalidating the queries
       // queryClient.invalidateQueries({
       //   queryKey: ['todos']
       // })
@@ -27,31 +27,37 @@ const TodoForm = () => {
       //Approach 2: adding the data to the cache
       console.log(newTodo); // object that is sent to the server by us
       console.log(savedTodo); //objectn that is returned as a response.
-      queryClient.setQueryData<Todo[]>(['todos'], (todos) => [savedTodo, ...todos || [] ]);
+      queryClient.setQueryData<Todo[]>(["todos"], (todos) => [
+        savedTodo,
+        ...(todos || []),
+      ]);
     },
   });
   return (
-    <form
-      className="row mb-3"
-      onSubmit={(event) => {
-        event.preventDefault();
+    <>
+      {addTodo.error && <div className="alert alert-danger"> {addTodo.error.message} </div>}
+      <form
+        className="row mb-3"
+        onSubmit={(event) => {
+          event.preventDefault();
 
-        if (ref.current && ref.current.value)
-          addTodo.mutate({
-            id: 0,
-            title: ref.current?.value,
-            completed: false,
-            userId: 1,
-          });
-      }}
-    >
-      <div className="col">
-        <input ref={ref} type="text" className="form-control" />
-      </div>
-      <div className="col">
-        <button className="btn btn-primary">Add</button>
-      </div>
-    </form>
+          if (ref.current && ref.current.value)
+            addTodo.mutate({
+              id: 0,
+              title: ref.current?.value,
+              completed: false,
+              userId: 1,
+            });
+        }}
+      >
+        <div className="col">
+          <input ref={ref} type="text" className="form-control" />
+        </div>
+        <div className="col">
+          <button className="btn btn-primary">Add</button>
+        </div>
+      </form>
+    </>
   );
 };
 
