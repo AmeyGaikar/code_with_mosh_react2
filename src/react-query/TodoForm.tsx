@@ -25,17 +25,21 @@ const TodoForm = () => {
       // })
 
       //Approach 2: adding the data to the cache
-      console.log(newTodo); // object that is sent to the server by us
-      console.log(savedTodo); //objectn that is returned as a response.
+      // console.log(newTodo); object that is sent to the server by us.
+      // console.log(savedTodo); object that is returned as a response.
       queryClient.setQueryData<Todo[]>(["todos"], (todos) => [
         savedTodo,
         ...(todos || []),
       ]);
+
+      if (ref.current) ref.current.value = "";
     },
   });
   return (
     <>
-      {addTodo.error && <div className="alert alert-danger"> {addTodo.error.message} </div>}
+      {addTodo.error && (
+        <div className="alert alert-danger"> {addTodo.error.message} </div>
+      )}
       <form
         className="row mb-3"
         onSubmit={(event) => {
@@ -54,7 +58,9 @@ const TodoForm = () => {
           <input ref={ref} type="text" className="form-control" />
         </div>
         <div className="col">
-          <button className="btn btn-primary">Add</button>
+          <button className="btn btn-primary" disabled={addTodo.isLoading}>
+            {addTodo.isLoading ? "Adding" : "Add"}
+          </button>
         </div>
       </form>
     </>
