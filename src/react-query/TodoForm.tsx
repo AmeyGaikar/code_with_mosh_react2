@@ -9,30 +9,40 @@ interface Todo {
   completed: boolean;
 }
 
+interface AddTodoContext {
+  previousTodos: Todo[];
+}
+
 const TodoForm = () => {
   const ref = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const addTodo = useMutation<Todo, Error, Todo>({
+  const addTodo = useMutation<Todo, Error, Todo, AddTodoContext>({
     mutationFn: (todo: Todo) =>
       axios
         .post<Todo>("https://jsonplaceholder.typicode.com/todos", todo)
         .then((res) => res.data),
-    onSuccess: (savedTodo, newTodo) => {
-      //Approach 1 : invalidating the queries
-      // queryClient.invalidateQueries({
-      //   queryKey: ['todos']
-      // })
 
-      //Approach 2: adding the data to the cache
-      // console.log(newTodo); object that is sent to the server by us.
-      // console.log(savedTodo); object that is returned as a response.
+    onMutate: (newTodo) => {
+      const previousTodos = queryClient.getQueryData<Todo[]>(["todos"]) || [];
       queryClient.setQueryData<Todo[]>(["todos"], (todos) => [
-        savedTodo,
+        newTodo,
         ...(todos || []),
       ]);
-
       if (ref.current) ref.current.value = "";
+
+      return { previousTodos };
+    },
+
+    onSuccess: (savedTodo, newTodo) => {
+      queryClient.setQueryData<Todo[]>(["todo"], (todos) =>
+        todos?.map((todo) => (todo === newTodo ? savedTodo : todo)) //if a todo is equal to the optimistically updated todo sent by us to the server (POST), then change/swap that todo with the one that we got in response from the API because it has the og id.
+      );
+    },
+
+    onError: (error, newTodo, context) => {
+      if (!context) return;
+      queryClient.setQueryData(["todos"], context.previousTodos);
     },
   });
   return (
