@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRef } from "react";
+import useAddTodos from "./hooks/useAddTodos";
 
 interface Todo {
   id: number;
@@ -15,35 +16,8 @@ interface AddTodoContext {
 
 const TodoForm = () => {
   const ref = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
-
-  const addTodo = useMutation<Todo, Error, Todo, AddTodoContext>({
-    mutationFn: (todo: Todo) =>
-      axios
-        .post<Todo>("https://jsonplaceholder.typicode.com/todos", todo)
-        .then((res) => res.data),
-
-    onMutate: (newTodo) => {
-      const previousTodos = queryClient.getQueryData<Todo[]>(["todos"]) || [];
-      queryClient.setQueryData<Todo[]>(["todos"], (todos) => [
-        newTodo,
-        ...(todos || []),
-      ]);
-      if (ref.current) ref.current.value = "";
-
-      return { previousTodos };
-    },
-
-    onSuccess: (savedTodo, newTodo) => {
-      queryClient.setQueryData<Todo[]>(["todo"], (todos) =>
-        todos?.map((todo) => (todo === newTodo ? savedTodo : todo)) //if a todo is equal to the optimistically updated todo sent by us to the server (POST), then change/swap that todo with the one that we got in response from the API because it has the og id.
-      );
-    },
-
-    onError: (error, newTodo, context) => {
-      if (!context) return;
-      queryClient.setQueryData(["todos"], context.previousTodos);
-    },
+  const addTodo = useAddTodos(() => {
+    if (ref.current) ref.current.value = "";
   });
   return (
     <>
@@ -78,3 +52,4 @@ const TodoForm = () => {
 };
 
 export default TodoForm;
+ 
