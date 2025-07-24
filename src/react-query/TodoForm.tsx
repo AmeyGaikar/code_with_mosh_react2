@@ -1,18 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { useRef } from "react";
 import useAddTodos from "./hooks/useAddTodos";
-
-interface Todo {
-  id: number;
-  title: string;
-  userId: number;
-  completed: boolean;
-}
-
-interface AddTodoContext {
-  previousTodos: Todo[];
-}
 
 const TodoForm = () => {
   const ref = useRef<HTMLInputElement>(null);
@@ -42,8 +29,8 @@ const TodoForm = () => {
           <input ref={ref} type="text" className="form-control" />
         </div>
         <div className="col">
-          <button className="btn btn-primary" disabled={addTodo.isLoading}>
-            {addTodo.isLoading ? "Adding" : "Add"}
+          <button className="btn btn-primary">
+            Add
           </button>
         </div>
       </form>
