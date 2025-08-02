@@ -11,7 +11,7 @@ const TaskList = () => {
             type: "ADD",
             task: {
               id: Date.now(),
-              title: "Task" + Date.now(),
+              title: "Task " + Date.now(),
             },
           })
         }

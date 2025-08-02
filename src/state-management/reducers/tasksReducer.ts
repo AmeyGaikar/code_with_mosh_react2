@@ -4,13 +4,13 @@ interface Task {
 }
 
 interface AddTask {
-  type: "ADD";
-  task: Task; // task object to be added.
+  type: "ADD"; //
+  task: Task; // task object to be added, an additonal payload
 }
 
 interface Deletetask {
   type: "DELETE";
-  taskId: number;
+  taskId: number; //task id of the task to delete.
 }
 
 type TaskAction = AddTask | Deletetask;
@@ -25,5 +25,4 @@ const tasksReducer = (tasks: Task[], action: TaskAction): Task[] => {
   }
 };
 
-
-export default tasksReducer
+export default tasksReducer;
