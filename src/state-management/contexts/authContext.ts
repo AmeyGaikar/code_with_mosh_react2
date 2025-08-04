@@ -9,4 +9,4 @@ interface AuthContextType {
 
 const AuthContext =  React.createContext<AuthContextType>( {} as AuthContextType);
 
-export default AuthContext
+export default AuthContext 
