@@ -1,8 +1,7 @@
-import useAuth from "./hooks/useAuth";
+import useAuth from "./useAuth";
 
 const LoginStatus = () => {
-
-const {user, dispatch} = useAuth();
+  const { user, dispatch } = useAuth();
 
   if (user)
     return (
