@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import { Task, TaskAction } from "../reducers/tasksReducer";
+import { Task, TaskAction } from "./TasksProvider";
 import React from "react";
 
 interface tasksContextType {
@@ -12,4 +12,3 @@ const TasksContext = React.createContext<tasksContextType>(
 );
 
 export default TasksContext;
- 
