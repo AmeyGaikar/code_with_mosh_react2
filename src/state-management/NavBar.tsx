@@ -4,8 +4,8 @@ import TasksContext from "./tasks/tasksContext";
 import useCounterStore from "./counter/store";
 
 const NavBar = () => {
-  const { tasks } = useContext(TasksContext);
   const counter = useCounterStore((s) => s.counter);
+  const { tasks } = useContext(TasksContext);
 
   console.log("render navbar");
   return (
