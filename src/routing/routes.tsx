@@ -4,7 +4,7 @@ import UserList from "./UserList";
 import ContactPage from "./ContactPage";
 import UserDetail from "./UserDetail";
 import Layout from "./Layout";
-import UserPage from "./userPage";
+import UserPage from "./UserPage";
 
 const router = createBrowserRouter([
   {
